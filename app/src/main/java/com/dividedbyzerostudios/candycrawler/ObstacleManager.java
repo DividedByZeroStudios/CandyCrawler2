@@ -1,6 +1,8 @@
 package com.dividedbyzerostudios.candycrawler;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 import java.util.ArrayList;
 
@@ -18,6 +20,9 @@ public class ObstacleManager {
 
 
     private long startTime;
+    private long initTime;
+
+    private int score = 0;
 
     public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, int color) {
         this.playerGap = playerGap;
@@ -25,11 +30,19 @@ public class ObstacleManager {
         this.obstacleHeight = obstacleHeight;
         this.color = color;
 
-        startTime = System.currentTimeMillis();
+        startTime = initTime = System.currentTimeMillis();
 
         obstacles = new ArrayList<>();
 
         populateObstacles();
+    }
+
+    public boolean playerCollide(RectPlayer player) {
+        for(Obstacle ob : obstacles) {
+            if(ob.playerCollide(player))
+                return true;
+        }
+        return false;
     }
 
     private void populateObstacles() {
@@ -44,7 +57,7 @@ public class ObstacleManager {
     public void update() {
         int elapsedTime = (int) (System.currentTimeMillis() - startTime);
         startTime = System.currentTimeMillis();
-        float speed = Constants.SCREEN_HEIGHT/10000.0f;
+        float speed = (float)(Math.sqrt(1 + (startTime - initTime)/2000.0))*Constants.SCREEN_HEIGHT/(10000.0f); //change the first divider to change speed, higher slows down
         for(Obstacle ob : obstacles) {
             ob.incrementY(speed * elapsedTime);
         }
@@ -52,11 +65,16 @@ public class ObstacleManager {
             int xStart = (int)(Math.random()*(Constants.SCREEN_WIDTH - playerGap));
             obstacles.add(0, new Obstacle(obstacleHeight, color, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap, playerGap));
             obstacles.remove(obstacles.size() - 1);
+            score += 10;
         }
     }
 
     public void draw(Canvas canvas) {
         for(Obstacle ob : obstacles)
             ob.draw(canvas);
+        Paint paint = new Paint();
+        paint.setTextSize(100);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(" " + score, 50, 50 + paint.descent() - paint.ascent(), paint);
     }
 }
