@@ -26,6 +26,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         getHolder().addCallback(this);
 
+        Constants.CURRENT_CONTEXT = context;
+
         thread = new MainThread(getHolder(), this);
 
         manager = new SceneManager();
@@ -68,8 +70,10 @@ public boolean onTouchEvent (MotionEvent event) {
 }
 
     public void update() {
+
         manager.update();
     }
+
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);

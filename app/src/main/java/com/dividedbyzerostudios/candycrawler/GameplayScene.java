@@ -18,7 +18,7 @@ public class GameplayScene implements Scene {
     private Rect r = new Rect();
 
     private RectPlayer player;
-    private Point playerPoint;
+    public Point playerPoint;
     private ObstacleManager obstacleManager;
 
     private boolean movingPlayer = false;

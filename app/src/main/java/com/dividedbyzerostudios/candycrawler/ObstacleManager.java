@@ -3,8 +3,13 @@ package com.dividedbyzerostudios.candycrawler;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import static com.dividedbyzerostudios.candycrawler.MainThread.canvas;
 
 /**
  * Created by Georg on 13/03/2017.
@@ -18,11 +23,14 @@ public class ObstacleManager {
     private int obstacleHeight;
     private int color;
 
+    private Rect r = new Rect();
 
     private long startTime;
     private long initTime;
 
     private int score = 0;
+    private int tempTime = 0;
+    public boolean plusScore = false;
 
     public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, int color) {
         this.playerGap = playerGap;
@@ -66,6 +74,8 @@ public class ObstacleManager {
             obstacles.add(0, new Obstacle(obstacleHeight, color, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap, playerGap));
             obstacles.remove(obstacles.size() - 1);
             score += 10;
+            plusScore = true;
+            tempTime = (int)System.currentTimeMillis();
         }
     }
 
@@ -76,5 +86,27 @@ public class ObstacleManager {
         paint.setTextSize(100);
         paint.setColor(Color.BLACK);
         canvas.drawText(" " + score, 50, 50 + paint.descent() - paint.ascent(), paint);
+
+        if(plusScore) {
+            if ((int)System.currentTimeMillis() - tempTime >= 1000) {
+                plusScore = false;
+            }
+            Paint paint2 = new Paint();
+            paint2.setTextSize(100);
+            paint2.setColor(Color.GREEN);
+            drawPlusScore(canvas, paint2, "+10!");
+        }
+    }
+    private void drawPlusScore(Canvas canvas, Paint paint, String text) {
+        paint.setTextAlign(Paint.Align.RIGHT);
+        canvas.getClipBounds(r);
+        int cHeight = r.height();
+        int cWidth = r.width();
+        paint.getTextBounds(text, 0, text.length(), r);
+        float x = cWidth - r.width() / 4f - r.left;
+        float y = r.height() - r.bottom + 100f;
+        canvas.drawText(text, x, y,paint);
+
     }
 }
+
