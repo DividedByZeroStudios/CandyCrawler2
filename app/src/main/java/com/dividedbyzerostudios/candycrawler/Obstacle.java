@@ -26,7 +26,7 @@ public class Obstacle implements GameObject {
     }
 
 
-    public Obstacle (int rectHeight, int color, int startX, int startY, int playerGap) {
+    public Obstacle(int rectHeight, int color, int startX, int startY, int playerGap) {
 
         this.color = color;
         rectangle = new Rect(0, startY, startX, startY + rectHeight);
@@ -35,7 +35,6 @@ public class Obstacle implements GameObject {
 
     public boolean playerCollide(RectPlayer player) {
         return Rect.intersects(rectangle, player.getRectangle()) || Rect.intersects(rectangle2, player.getRectangle());
-
     }
 
     public void draw(Canvas canvas) {

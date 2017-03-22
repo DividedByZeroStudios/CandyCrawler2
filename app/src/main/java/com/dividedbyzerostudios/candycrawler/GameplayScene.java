@@ -18,8 +18,9 @@ public class GameplayScene implements Scene {
     private Rect r = new Rect();
 
     private RectPlayer player;
-    public Point playerPoint;
+    private Point playerPoint;
     private ObstacleManager obstacleManager;
+    private NPCManager npcManager;
 
     private boolean movingPlayer = false;
 
@@ -32,6 +33,7 @@ public class GameplayScene implements Scene {
         playerPoint = new Point(Constants.SCREEN_WIDTH/2, 3* Constants.SCREEN_HEIGHT/4);
         player.update(playerPoint);
 
+        npcManager = new NPCManager(2, Constants.SCREEN_HEIGHT + 100);
         obstacleManager = new ObstacleManager(200, Constants.SCREEN_HEIGHT + 100, 75, Color.BLACK);
     }
 
@@ -44,6 +46,7 @@ public class GameplayScene implements Scene {
         playerPoint = new Point(Constants.SCREEN_WIDTH/2, 3* Constants.SCREEN_HEIGHT/4);
         player.update(playerPoint);
         obstacleManager = new ObstacleManager(200, Constants.SCREEN_HEIGHT + 100, 75, Color.BLACK);
+        npcManager = new NPCManager(2, Constants.SCREEN_HEIGHT + 100);
         movingPlayer = false;
     }
 
@@ -75,6 +78,7 @@ public class GameplayScene implements Scene {
 
         player.draw(canvas);
         obstacleManager.draw(canvas);
+        npcManager.draw(canvas);
 
         if (gameOver) {
             Paint paint = new Paint();
@@ -90,6 +94,14 @@ public class GameplayScene implements Scene {
             player.update(playerPoint);
             obstacleManager.update();
             if(obstacleManager.playerCollide(player)) {
+                gameOver = true;
+                gameOverTime = System.currentTimeMillis();
+            }
+        }
+        if(!gameOver) {
+            player.update(playerPoint);
+            npcManager.update();
+            if(npcManager.playerCollideNPC(player)) {
                 gameOver = true;
                 gameOverTime = System.currentTimeMillis();
             }

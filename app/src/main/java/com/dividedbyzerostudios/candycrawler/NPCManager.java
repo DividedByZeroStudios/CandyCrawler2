@@ -8,55 +8,51 @@ import android.graphics.Rect;
 import java.util.ArrayList;
 
 /**
- * Created by Georg on 13/03/2017.
+ * Created by Georg on 22/03/2017.
  */
 
-public class ObstacleManager {
-    //Higher index = lower on screen = higher y value
-    private ArrayList<Obstacle> obstacles;
-    private int playerGap;
-    private int obstacleGap;
-    private int obstacleHeight;
-    private int color;
+public class NPCManager {
+    private ArrayList<RectNPC> monsters;
+    private int amountNPC;
+    private int NPCGap;
 
     private Rect r = new Rect();
+
     private float x = (float) Math.random() * (Constants.SCREEN_WIDTH + 20);
     private float y = (float) Math.random() * (Constants.SCREEN_HEIGHT + 20);
 
     private long startTime;
     private long initTime;
 
-    public int score = 0;
     private int tempTime = 0;
     private boolean plusScore = false;
 
-    public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, int color) {
-        this.playerGap = playerGap;
-        this.obstacleGap = obstacleGap;
-        this.obstacleHeight = obstacleHeight;
-        this.color = color;
+    public NPCManager(int amountNPC, int NPCGap) {
+        this.amountNPC = amountNPC;
+        this.NPCGap = NPCGap;
 
         startTime = initTime = System.currentTimeMillis();
 
-        obstacles = new ArrayList<>();
+        monsters = new ArrayList<>();
 
-        populateObstacles();
+        populateNPCS();
     }
 
-    public boolean playerCollide(RectPlayer player) {
-        for(Obstacle ob : obstacles) {
-            if(ob.playerCollide(player))
+    public boolean playerCollideNPC(RectPlayer player) {
+        for(RectNPC NPC : monsters) {
+            if(NPC.playerCollideNPC(player))
                 return true;
         }
         return false;
     }
 
-    private void populateObstacles() {
+    private void populateNPCS() {
+        if(monsters.size() >= amountNPC)
+                return;
         int currY = -5*Constants.SCREEN_HEIGHT/4;
         while(currY < 0) {
-            int xStart = (int)(Math.random()*(Constants.SCREEN_WIDTH - playerGap));
-            obstacles.add(new Obstacle(obstacleHeight, color, xStart, currY, playerGap));
-            currY += obstacleHeight + obstacleGap;
+            monsters.add(new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0)));
+            currY += 100 + NPCGap;
         }
     }
 
@@ -64,14 +60,13 @@ public class ObstacleManager {
         int elapsedTime = (int) (System.currentTimeMillis() - startTime);
         startTime = System.currentTimeMillis();
         float speed = (float)(Math.sqrt(1 + (startTime - initTime)/2000.0))*Constants.SCREEN_HEIGHT/(10000.0f); //change the first divider to change speed, higher slows down
-        for(Obstacle ob : obstacles) {
-            ob.incrementY(speed * elapsedTime);
+        for(RectNPC NPC : monsters) {
+            NPC.incrementY(speed * elapsedTime);
         }
-        if(obstacles.get(obstacles.size() - 1).getRectangle().top >= Constants.SCREEN_HEIGHT) {
-            int xStart = (int)(Math.random()*(Constants.SCREEN_WIDTH - playerGap));
-            obstacles.add(0, new Obstacle(obstacleHeight, color, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap, playerGap));
-            obstacles.remove(obstacles.size() - 1);
-            score += 10;
+        if(monsters.get(monsters.size() - 1).getRectangle().top >= Constants.SCREEN_HEIGHT) {
+            monsters.add(0, new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0)));
+            monsters.remove(monsters.size() - 1);
+            //score -= 10;
             plusScore = true;
             tempTime = (int)System.currentTimeMillis();
             x = (float) (Math.random() * (Constants.SCREEN_WIDTH)) + 100;
@@ -81,30 +76,27 @@ public class ObstacleManager {
     }
 
     public void draw(Canvas canvas) {
-        for(Obstacle ob : obstacles)
-            ob.draw(canvas);
+        for(RectNPC NPC : monsters)
+            NPC.draw(canvas);
         Paint paint = new Paint();
         paint.setTextSize(100);
         paint.setColor(Color.BLACK);
-        canvas.drawText(" " + score, 50, 50 + paint.descent() - paint.ascent(), paint);
+        //canvas.drawText(" " + score, 50, 50 + paint.descent() - paint.ascent(), paint);
 
         if(plusScore) {
             if ((int)System.currentTimeMillis() - tempTime >= 200)
                 plusScore = false;
             Paint paint2 = new Paint();
             paint2.setTextSize(100);
-            paint2.setColor(Color.GREEN);
-            drawPlusScore(canvas, paint2, "+10!");
+            paint2.setColor(Color.RED);
+            drawPlusScore(canvas, paint2, "-10!");
         }
     }
     private void drawPlusScore(Canvas canvas, Paint paint, String text) {
         paint.setTextAlign(Paint.Align.RIGHT);
         canvas.getClipBounds(r);
-        int cHeight = r.height();
-        int cWidth = r.width();
         paint.getTextBounds(text, 0, text.length(), r);
         canvas.drawText(text, x, y,paint);
 
     }
 }
-
