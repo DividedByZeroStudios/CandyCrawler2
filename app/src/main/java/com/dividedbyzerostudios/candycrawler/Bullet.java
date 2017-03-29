@@ -48,7 +48,7 @@ public class Bullet implements GameObject {
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.rgb(255, 192, 203));
         canvas.drawRect(rectangle, paint);
     }
 }

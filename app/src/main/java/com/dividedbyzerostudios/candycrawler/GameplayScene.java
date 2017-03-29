@@ -23,7 +23,7 @@ public class GameplayScene implements Scene {
     private Point playerPoint;
     private ObstacleManager obstacleManager;
     private NPCManager npcManager;
-    private Rect background = new Rect(0, 3 * Constants.SCREEN_HEIGHT/7, Constants.SCREEN_WIDTH, 3 * Constants.SCREEN_HEIGHT/7 + 400);
+    private Rect background = new Rect(0, 3 * Constants.SCREEN_HEIGHT/7 + 5, Constants.SCREEN_WIDTH, 3 * Constants.SCREEN_HEIGHT/7 + 400);
 
     private boolean movingPlayer = false;
 
@@ -93,8 +93,8 @@ public class GameplayScene implements Scene {
             paint.setTextSize(100);
             paint.setColor(Color.RED);
             Paint paint3 = new Paint();
-            paint3.setTextSize(100);
-            paint3.setColor(Color.WHITE);
+            paint3.setTextSize(80);
+            paint3.setColor(Color.LTGRAY);
             canvas.drawRect(background, paint3);
             drawCenterText(canvas, paint, "Game Over!");
             drawScoreText(canvas, paint, "Your Final Score Is " + Constants.SCORE + "!");
