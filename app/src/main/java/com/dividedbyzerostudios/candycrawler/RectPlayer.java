@@ -9,6 +9,10 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Created by Georg on 12/03/2017.
  */
@@ -17,6 +21,9 @@ public class RectPlayer implements GameObject {
 
     private Rect rectangle;
     private int color;
+    private int timeCheck = (int) 0;
+
+    private ArrayList<Bullet> friendlyFire;
 
     private Animation idle;
     private Animation walkRight;
@@ -46,35 +53,54 @@ public class RectPlayer implements GameObject {
 
         walkLeft = new Animation(new Bitmap[]{walk1, walk2}, 0.5f);
 
+        friendlyFire = new ArrayList<>();
         animManager = new AnimationManager(new Animation[]{idle, walkRight, walkLeft});
+    }
 
+    public void bulletReset() {
+        friendlyFire = new ArrayList<>();
     }
 
     @Override
     public void draw(Canvas canvas) {
         //Paint paint = new Paint();
-       //paint.setColor(color);
+        //paint.setColor(color);
         //canvas.drawRect(rectangle, paint);
         animManager.draw(canvas, rectangle);
-}
-
-@Override
-public void update() {
-    animManager.update();
+        for(Bullet shot : friendlyFire)
+            shot.draw(canvas);
     }
 
-    public void update(Point point) {
-        float oldLeft = rectangle.left;
+    public List<Bullet> getList() {
+        return friendlyFire;
+    }
 
-        rectangle.set(point.x - rectangle.width()/2, point.y - rectangle.height()/2, point.x + rectangle.width()/2, point.y + rectangle.height()/2); //set with left,right,top,bottom
-
-        int state = 0;
-        if(rectangle.left - oldLeft > 5)
-            state = 1;
-        else if(rectangle.left - oldLeft < -5)
-            state = 2;
-
-        animManager.playAnim(state);
+    @Override
+    public void update() {
         animManager.update();
+        }
+
+    public void update(Point point) {
+
+        int bulletsOnScreen = friendlyFire.size();
+        if (bulletsOnScreen < 30) {
+            if ((int) System.currentTimeMillis() - timeCheck > 300) {
+                friendlyFire.add(new Bullet(point.x, point.y));
+                timeCheck = (int) System.currentTimeMillis();
+            }
+
+            float oldLeft = rectangle.left;
+
+            rectangle.set(point.x - rectangle.width() / 2, point.y - rectangle.height() / 2, point.x + rectangle.width() / 2, point.y + rectangle.height() / 2); //set with left,right,top,bottom
+
+            int state = 0;
+            if (rectangle.left - oldLeft > 5)
+                state = 1;
+            else if (rectangle.left - oldLeft < -5)
+                state = 2;
+
+            animManager.playAnim(state);
+            animManager.update();
+        }
     }
 }

@@ -18,6 +18,7 @@ public class ObstacleManager {
     private int obstacleGap;
     private int obstacleHeight;
     private int color;
+    private int doorcolor;
 
     private Rect r = new Rect();
     private float x = (float) Math.random() * (Constants.SCREEN_WIDTH + 20);
@@ -26,19 +27,22 @@ public class ObstacleManager {
     private long startTime;
     private long initTime;
 
-    public int score = 0;
     private int tempTime = 0;
     private boolean plusScore = false;
+    private boolean doorCheck = false;
 
-    public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, int color) {
+    public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, int color, int doorcolor) {
         this.playerGap = playerGap;
         this.obstacleGap = obstacleGap;
         this.obstacleHeight = obstacleHeight;
         this.color = color;
+        this.doorcolor = doorcolor;
 
         startTime = initTime = System.currentTimeMillis();
 
         obstacles = new ArrayList<>();
+
+        Constants.SCORE = 0;
 
         populateObstacles();
     }
@@ -51,11 +55,36 @@ public class ObstacleManager {
         return false;
     }
 
+    public boolean NPCCollide(RectNPC NPC) {
+        for(Obstacle ob : obstacles) {
+            if(ob.NPCCollide(NPC))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean BULLETCollide(Bullet bullet) {
+        for(Obstacle ob : obstacles) {
+            if(ob.bulletCollideObstacle(bullet))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean BULLETCollideDoor(Bullet bullet) {
+        for(Obstacle ob : obstacles) {
+            if(ob.bulletCollideDoor(bullet)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void populateObstacles() {
         int currY = -5*Constants.SCREEN_HEIGHT/4;
         while(currY < 0) {
             int xStart = (int)(Math.random()*(Constants.SCREEN_WIDTH - playerGap));
-            obstacles.add(new Obstacle(obstacleHeight, color, xStart, currY, playerGap));
+            obstacles.add(new Obstacle(obstacleHeight, color, doorcolor, xStart, currY, playerGap));
             currY += obstacleHeight + obstacleGap;
         }
     }
@@ -66,12 +95,15 @@ public class ObstacleManager {
         float speed = (float)(Math.sqrt(1 + (startTime - initTime)/2000.0))*Constants.SCREEN_HEIGHT/(10000.0f); //change the first divider to change speed, higher slows down
         for(Obstacle ob : obstacles) {
             ob.incrementY(speed * elapsedTime);
+            ob.update();
         }
+
+
         if(obstacles.get(obstacles.size() - 1).getRectangle().top >= Constants.SCREEN_HEIGHT) {
             int xStart = (int)(Math.random()*(Constants.SCREEN_WIDTH - playerGap));
-            obstacles.add(0, new Obstacle(obstacleHeight, color, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap, playerGap));
+            obstacles.add(0, new Obstacle(obstacleHeight, color, doorcolor, xStart, obstacles.get(0).getRectangle().top - obstacleHeight - obstacleGap, playerGap));
             obstacles.remove(obstacles.size() - 1);
-            score += 10;
+            Constants.SCORE += 10;
             plusScore = true;
             tempTime = (int)System.currentTimeMillis();
             x = (float) (Math.random() * (Constants.SCREEN_WIDTH)) + 100;
@@ -86,7 +118,7 @@ public class ObstacleManager {
         Paint paint = new Paint();
         paint.setTextSize(100);
         paint.setColor(Color.BLACK);
-        canvas.drawText(" " + score, 50, 50 + paint.descent() - paint.ascent(), paint);
+        canvas.drawText(" " + Constants.SCORE, 50, 50 + paint.descent() - paint.ascent(), paint);
 
         if(plusScore) {
             if ((int)System.currentTimeMillis() - tempTime >= 200)

@@ -9,6 +9,8 @@ import android.content.Context;
 public class Constants {
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;
+    public static int SCORE;
+    public static int NUMBER_ENEMIES = 2;
 
     public static Context CURRENT_CONTEXT;
 }

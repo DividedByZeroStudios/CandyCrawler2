@@ -6,6 +6,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Georg on 22/03/2017.
@@ -46,14 +49,29 @@ public class NPCManager {
         return false;
     }
 
+    public boolean bulletCollide(Bullet bullet) {
+        for(Iterator<RectNPC> iterator = monsters.iterator(); iterator.hasNext();) {
+            if(iterator.next().bulletCollideNPC(bullet)) {
+                iterator.remove();
+                monsters.add(0, new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0), 25));
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void populateNPCS() {
         if(monsters.size() >= amountNPC)
                 return;
         int currY = -5*Constants.SCREEN_HEIGHT/4;
         while(currY < 0) {
-            monsters.add(new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0)));
+            monsters.add(new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0), 25));
             currY += 100 + NPCGap;
         }
+    }
+
+    public List<RectNPC> getList() {
+        return monsters;
     }
 
     public void update() {
@@ -62,29 +80,33 @@ public class NPCManager {
         float speed = (float)(Math.sqrt(1 + (startTime - initTime)/2000.0))*Constants.SCREEN_HEIGHT/(10000.0f); //change the first divider to change speed, higher slows down
         for(RectNPC NPC : monsters) {
             NPC.incrementY(speed * elapsedTime);
+            NPC.moveX(NPC);
         }
-        if(monsters.get(monsters.size() - 1).getRectangle().top >= Constants.SCREEN_HEIGHT) {
-            monsters.add(0, new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0)));
-            monsters.remove(monsters.size() - 1);
-            //score -= 10;
-            plusScore = true;
-            tempTime = (int)System.currentTimeMillis();
-            x = (float) (Math.random() * (Constants.SCREEN_WIDTH)) + 100;
-            y = (float) (Math.random() * ((Constants.SCREEN_HEIGHT /2))) + 100;
-
-        }
+        if(monsters.size() > 0)
+            if(monsters.get(monsters.size() - 1).getRectangle().top >= Constants.SCREEN_HEIGHT) {
+                monsters.add(0, new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0), 25));
+                //int increase = (int)(Math.sqrt(1 + (startTime - initTime)/2000.0));
+                //Constants.NUMBER_ENEMIES = Constants.NUMBER_ENEMIES * increase ;
+                monsters.remove(monsters.size() - 1);
+                Constants.SCORE -= 10;
+                plusScore = true;
+                tempTime = (int)System.currentTimeMillis();
+                x = (float) (Math.random() * (Constants.SCREEN_WIDTH)) + 100;
+                y = (float) (Math.random() * ((Constants.SCREEN_HEIGHT /2))) + 100;
+            }
+        for(RectNPC npc : monsters)
+            npc.update();
     }
 
     public void draw(Canvas canvas) {
         for(RectNPC NPC : monsters)
             NPC.draw(canvas);
-        Paint paint = new Paint();
-        paint.setTextSize(100);
-        paint.setColor(Color.BLACK);
-        //canvas.drawText(" " + score, 50, 50 + paint.descent() - paint.ascent(), paint);
+        //Paint paint = new Paint();
+        //paint.setTextSize(100);
+        //paint.setColor(Color.BLACK);
 
         if(plusScore) {
-            if ((int)System.currentTimeMillis() - tempTime >= 200)
+            if ((int)System.currentTimeMillis() - tempTime >= 300)
                 plusScore = false;
             Paint paint2 = new Paint();
             paint2.setTextSize(100);
