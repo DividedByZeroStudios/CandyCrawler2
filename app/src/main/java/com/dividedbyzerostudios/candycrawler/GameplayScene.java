@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.view.MotionEvent;
 
 import java.util.Iterator;
@@ -106,17 +107,19 @@ public class GameplayScene implements Scene {
 
         if (gameOver) {
             Paint paint = new Paint();
-            paint.setTextSize(70);
+            paint.setTextSize(50);
+            paint.setTypeface(Typeface.create("Courier", Typeface.NORMAL));
             paint.setColor(Color.DKGRAY);
             Paint paint3 = new Paint();
-            paint3.setTextSize(80);
-            paint3.setColor(Color.LTGRAY);
+            paint3.setTextSize(60);
+            paint3.setTypeface(Typeface.create("Arial", Typeface.NORMAL));
+            paint3.setColor(Color.DKGRAY);
             //canvas.drawRect(background, paint3);
 
             animManager.draw(canvas, background);
 
-            drawCenterText(canvas, paint, "Game Over! Tap to re-enter.");
-            drawScoreText(canvas, paint, "You Scored " + Constants.SCORE + "!");
+            drawCenterText(canvas, paint, "Game Over! Tap to retry.");
+            drawScoreText(canvas, paint3, "Your Score was " + Constants.SCORE);
 
         }
 
@@ -197,8 +200,8 @@ public class GameplayScene implements Scene {
 
             for(RectNPC NPC : npcManager.getList())
                 if (obstacleManager.NPCCollide(NPC)) {
-                    NPC.getRectangle().top = NPC.getRectangle().top + 200;
-                    NPC.getRectangle().bottom = NPC.getRectangle().bottom + 200;
+                    NPC.getRectangle().top -= 200;
+                    NPC.getRectangle().bottom -= 200;
                 }
 
             int i = 0;
@@ -206,7 +209,7 @@ public class GameplayScene implements Scene {
                 if (npcManager.getList().size() <= 1)
                     return;
                 if (Rect.intersects(npcManager.getList().get(i).getRectangle(), npcManager.getList().get(i + 1).getRectangle()))
-                    npcManager.getList().get(i).setRectangle(200);
+                    npcManager.getList().get(i).setRectangle(-200);
                 i += 1;
             }
 
