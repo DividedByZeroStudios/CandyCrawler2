@@ -39,19 +39,19 @@ public class RectPlayer implements GameObject {
         this.color = color;
 
         BitmapFactory bf = new BitmapFactory();
-        Bitmap idleImg = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.character_idle);
-        Bitmap walk1 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(),R.drawable.character_walk1);
-        Bitmap walk2 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(),R.drawable.character_walk2);
+        Bitmap idleImg = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.char_idle);
+        Bitmap walk1 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(),R.drawable.char_walk1);
+        Bitmap walk2 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(),R.drawable.char_walk2);
 
-        idle = new Animation(new Bitmap[]{idleImg}, 2);
-        walkRight = new Animation(new Bitmap[]{walk1, walk2}, 0.5f);
+        idle = new Animation(new Bitmap[]{idleImg}, 2, false);
+        walkRight = new Animation(new Bitmap[]{walk1, walk2}, 0.5f, false);
 
         Matrix m = new Matrix();
         m.preScale(-1, 1);
         walk1 = Bitmap.createBitmap(walk1, 0, 0, walk1.getWidth(), walk1.getHeight(), m, false);
         walk2 = Bitmap.createBitmap(walk2, 0, 0, walk2.getWidth(), walk2.getHeight(), m, false);
 
-        walkLeft = new Animation(new Bitmap[]{walk1, walk2}, 0.5f);
+        walkLeft = new Animation(new Bitmap[]{walk1, walk2}, 0.5f, false);
 
         friendlyFire = new ArrayList<>();
         animManager = new AnimationManager(new Animation[]{idle, walkRight, walkLeft});

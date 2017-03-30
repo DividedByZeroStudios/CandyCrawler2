@@ -12,6 +12,7 @@ import android.graphics.Rect;
 public class Animation {
     private Bitmap[] frames;
     private int frameIndex;
+    private boolean noScale;
 
     private boolean isPlaying = false;
     public boolean isPlaying() {
@@ -30,9 +31,10 @@ public class Animation {
 
     private long lastFrame;
 
-    public Animation(Bitmap[] frames, float animTime) {
+    public Animation(Bitmap[] frames, float animTime, boolean noScale) {
         this.frames = frames;
         frameIndex = 0;
+        this.noScale = noScale;
 
         frameTime = animTime/frames.length;
 
@@ -43,7 +45,8 @@ public class Animation {
         if(!isPlaying)
             return;
 
-        scaleRect(destination);
+        if(!noScale)
+            scaleRect(destination);
 
         canvas.drawBitmap(frames[frameIndex], null, destination, new Paint());
     }

@@ -1,8 +1,11 @@
 package com.dividedbyzerostudios.candycrawler;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+
 
 /**
  * Created by Georg on 12/03/2017.
@@ -15,6 +18,11 @@ public class Obstacle implements GameObject {
     private Rect rectangle2;
     private Rect rectangle;
     private Rect rectangledoor;
+    private AnimationManager animManager;
+    private AnimationManager animManager2;
+    private Animation wallTexture;
+    private Animation doorTexture;
+
 
     private boolean removeDoor;
 
@@ -39,6 +47,20 @@ public class Obstacle implements GameObject {
         rectangle = new Rect(0, startY, startX, startY + rectHeight);
         rectangle2 = new Rect(startX + playerGap, startY, Constants.SCREEN_WIDTH, startY + rectHeight);
         rectangledoor = new Rect(startX, startY, startX + playerGap, startY + rectHeight);
+
+        setTextures();
+    }
+
+    public void setTextures() {
+        BitmapFactory bf = new BitmapFactory();
+        Bitmap wall = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.wall);
+        Bitmap door = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.door);
+
+        wallTexture = new Animation(new Bitmap[]{wall}, 1, true);
+        doorTexture = new Animation(new Bitmap[]{door}, 1, true);
+
+        animManager = new AnimationManager(new Animation[]{wallTexture});
+        animManager2 = new AnimationManager(new Animation[]{doorTexture});
     }
 
     public boolean playerCollide(RectPlayer player) {
@@ -66,14 +88,26 @@ public class Obstacle implements GameObject {
         paint.setColor(color);
         Paint paint2 = new Paint();
         paint2.setColor(doorColor);
-        canvas.drawRect(rectangle, paint);
-        canvas.drawRect(rectangle2, paint);
-        canvas.drawRect(rectangledoor, paint2);
+
+        animManager.draw(canvas, rectangle);
+        animManager.draw(canvas, rectangle2);
+        animManager2.draw(canvas, rectangledoor);
+
+
+        //canvas.drawRect(rectangle, paint);
+        //canvas.drawRect(rectangle2, paint);
+        //canvas.drawRect(rectangledoor, paint2);
     }
 
     @Override
     public void update() {
         if(removeDoor)
             rectangledoor = new Rect(0,0,0,0);
+
+        int state = 0;
+        animManager2.playAnim(state);
+        animManager2.update();
+        animManager.playAnim(state);
+        animManager.update();
     }
 }

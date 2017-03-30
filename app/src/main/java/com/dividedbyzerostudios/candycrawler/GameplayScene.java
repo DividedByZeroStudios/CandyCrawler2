@@ -1,5 +1,9 @@
 package com.dividedbyzerostudios.candycrawler;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,7 +12,9 @@ import android.graphics.Rect;
 import android.view.MotionEvent;
 
 import java.util.Iterator;
+import java.util.concurrent.SynchronousQueue;
 
+import static com.dividedbyzerostudios.candycrawler.Constants.CURRENT_CONTEXT;
 import static com.dividedbyzerostudios.candycrawler.Constants.SCREEN_HEIGHT;
 
 /**
@@ -23,7 +29,9 @@ public class GameplayScene implements Scene {
     private Point playerPoint;
     private ObstacleManager obstacleManager;
     private NPCManager npcManager;
-    private Rect background = new Rect(0, 3 * Constants.SCREEN_HEIGHT/7 + 5, Constants.SCREEN_WIDTH, 3 * Constants.SCREEN_HEIGHT/7 + 400);
+    private Rect background = new Rect(0, -50, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+    private AnimationManager animManager;
+    private Animation endgamescreen;
 
     private boolean movingPlayer = false;
 
@@ -36,13 +44,20 @@ public class GameplayScene implements Scene {
     private float ya = (float) Math.random() * (Constants.SCREEN_HEIGHT + 20);
 
 
+
     public GameplayScene() {
-        player = new RectPlayer(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0));
+        player = new RectPlayer(new Rect(150, 150, 300, 300), Color.rgb(255, 0, 0));
         playerPoint = new Point(Constants.SCREEN_WIDTH/2, 3* Constants.SCREEN_HEIGHT/4);
         player.update(playerPoint);
 
         npcManager = new NPCManager(Constants.NUMBER_ENEMIES, Constants.SCREEN_HEIGHT + 100);
         obstacleManager = new ObstacleManager(200, Constants.SCREEN_HEIGHT + 100, 75, Color.BLACK, Color.rgb(102, 51, 0));
+
+
+        BitmapFactory bf = new BitmapFactory();
+        Bitmap idleImg = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.endgamescreen);
+        endgamescreen = new Animation(new Bitmap[]{idleImg}, 1, true);
+        animManager = new AnimationManager(new Animation[]{endgamescreen});
     }
 
     @Override
@@ -54,6 +69,7 @@ public class GameplayScene implements Scene {
         playerPoint = new Point(Constants.SCREEN_WIDTH/2, 3* Constants.SCREEN_HEIGHT/4);
         player.update(playerPoint);
         player.bulletReset();
+        Constants.bgMove = Constants.originalbgMove;
         obstacleManager = new ObstacleManager(200, Constants.SCREEN_HEIGHT + 100, 75, Color.BLACK, Color.rgb(102, 51, 0));
         npcManager = new NPCManager(Constants.NUMBER_ENEMIES, Constants.SCREEN_HEIGHT + 100);
         movingPlayer = false;
@@ -82,7 +98,7 @@ public class GameplayScene implements Scene {
 
     @Override
     public void draw(Canvas canvas) {
-        canvas.drawColor(Color.DKGRAY);
+        //canvas.drawColor(Color.DKGRAY);
 
         player.draw(canvas);
         obstacleManager.draw(canvas);
@@ -90,14 +106,17 @@ public class GameplayScene implements Scene {
 
         if (gameOver) {
             Paint paint = new Paint();
-            paint.setTextSize(100);
-            paint.setColor(Color.RED);
+            paint.setTextSize(70);
+            paint.setColor(Color.DKGRAY);
             Paint paint3 = new Paint();
             paint3.setTextSize(80);
             paint3.setColor(Color.LTGRAY);
-            canvas.drawRect(background, paint3);
-            drawCenterText(canvas, paint, "Game Over!");
-            drawScoreText(canvas, paint, "Your Final Score Is " + Constants.SCORE + "!");
+            //canvas.drawRect(background, paint3);
+
+            animManager.draw(canvas, background);
+
+            drawCenterText(canvas, paint, "Game Over! Tap to re-enter.");
+            drawScoreText(canvas, paint, "You Scored " + Constants.SCORE + "!");
 
         }
 
@@ -111,8 +130,20 @@ public class GameplayScene implements Scene {
         }
     }
 
+    public boolean gameOverStatus() {
+        if(gameOver)
+            return true;
+        else
+            return false;
+    }
+
+
     @Override
     public void update() {
+
+        if(gameOver)
+            Constants.bgMove = 0;
+
         if (!gameOver) {
             for (Iterator<Bullet> iterator = player.getList().iterator(); iterator.hasNext(); ) {
                 if (npcManager.bulletCollide(iterator.next())) {
@@ -164,7 +195,7 @@ public class GameplayScene implements Scene {
                 }
             }
 
-            for (RectNPC NPC : npcManager.getList())
+            for(RectNPC NPC : npcManager.getList())
                 if (obstacleManager.NPCCollide(NPC)) {
                     NPC.getRectangle().top = NPC.getRectangle().top + 200;
                     NPC.getRectangle().bottom = NPC.getRectangle().bottom + 200;
@@ -177,6 +208,12 @@ public class GameplayScene implements Scene {
                 if (Rect.intersects(npcManager.getList().get(i).getRectangle(), npcManager.getList().get(i + 1).getRectangle()))
                     npcManager.getList().get(i).setRectangle(200);
                 i += 1;
+            }
+
+            if(gameOver) {
+                int state = 0;
+                animManager.playAnim(state);
+                animManager.update();
             }
         }
 

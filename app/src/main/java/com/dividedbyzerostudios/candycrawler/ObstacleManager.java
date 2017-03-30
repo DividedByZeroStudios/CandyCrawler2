@@ -117,7 +117,7 @@ public class ObstacleManager {
             ob.draw(canvas);
         Paint paint = new Paint();
         paint.setTextSize(100);
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.WHITE);
         canvas.drawText(" " + Constants.SCORE, 50, 50 + paint.descent() - paint.ascent(), paint);
 
         if(plusScore) {

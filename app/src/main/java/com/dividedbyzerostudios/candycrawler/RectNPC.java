@@ -53,19 +53,38 @@ public class RectNPC implements GameObject {
         rectangle.bottom = rectangle.bottom + randomiserY;
 
         BitmapFactory bf = new BitmapFactory();
-        Bitmap idleImg = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.spider);
-        Bitmap walk1 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(),R.drawable.spider_walk1);
-        Bitmap walk2 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(),R.drawable.spider_walk2);
+        float npcType = (float)Math.random();
+        if(npcType <= 0.5) {
+            Bitmap idleImg = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.npc1_idle);
+            Bitmap walk1 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.npc1_walk1);
+            Bitmap walk2 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.npc1_walk2);
 
-        idle = new Animation(new Bitmap[]{idleImg}, 2);
-        walkRight = new Animation(new Bitmap[]{walk1, walk2}, 0.5f);
+            idle = new Animation(new Bitmap[]{idleImg}, 2, false);
+            walkRight = new Animation(new Bitmap[]{walk1, walk2}, 0.5f, false);
 
-        Matrix m = new Matrix();
-        m.preScale(-1, 1);
-        walk1 = Bitmap.createBitmap(walk1, 0, 0, walk1.getWidth(), walk1.getHeight(), m, false);
-        walk2 = Bitmap.createBitmap(walk2, 0, 0, walk2.getWidth(), walk2.getHeight(), m, false);
+            Matrix m = new Matrix();
+            m.preScale(-1, 1);
+            walk1 = Bitmap.createBitmap(walk1, 0, 0, walk1.getWidth(), walk1.getHeight(), m, false);
+            walk2 = Bitmap.createBitmap(walk2, 0, 0, walk2.getWidth(), walk2.getHeight(), m, false);
 
-        walkLeft = new Animation(new Bitmap[]{walk1, walk2}, 0.5f);
+            walkLeft = new Animation(new Bitmap[]{walk1, walk2}, 0.5f, false);
+        }
+
+        if(npcType > 0.5) {
+            Bitmap idleImg = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.npc2_idle);
+            Bitmap walk1 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.npc2_walk1);
+            Bitmap walk2 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(), R.drawable.npc2_walk2);
+
+            idle = new Animation(new Bitmap[]{idleImg}, 2, false);
+            walkRight = new Animation(new Bitmap[]{walk1, walk2}, 0.5f, false);
+
+            Matrix m = new Matrix();
+            m.preScale(-1, 1);
+            walk1 = Bitmap.createBitmap(walk1, 0, 0, walk1.getWidth(), walk1.getHeight(), m, false);
+            walk2 = Bitmap.createBitmap(walk2, 0, 0, walk2.getWidth(), walk2.getHeight(), m, false);
+
+            walkLeft = new Animation(new Bitmap[]{walk1, walk2}, 0.5f, false);
+        }
 
         animManager2 = new AnimationManager(new Animation[]{idle, walkRight, walkLeft});
     }

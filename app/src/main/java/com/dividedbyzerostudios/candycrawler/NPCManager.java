@@ -53,7 +53,7 @@ public class NPCManager {
         for(Iterator<RectNPC> iterator = monsters.iterator(); iterator.hasNext();) {
             if(iterator.next().bulletCollideNPC(bullet)) {
                 iterator.remove();
-                monsters.add(0, new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0), 25));
+                monsters.add(0, new RectNPC(new Rect(150, 150, 300, 300), Color.rgb(255, 0, 0), 25));
                 return true;
             }
         }
@@ -65,7 +65,7 @@ public class NPCManager {
                 return;
         int currY = -5*Constants.SCREEN_HEIGHT/4;
         while(currY < 0) {
-            monsters.add(new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0), 25));
+            monsters.add(new RectNPC(new Rect(150, 150, 300, 300), Color.rgb(255, 0, 0), 25));
             currY += 100 + NPCGap;
         }
     }
@@ -84,7 +84,7 @@ public class NPCManager {
         }
         if(monsters.size() > 0)
             if(monsters.get(monsters.size() - 1).getRectangle().top >= Constants.SCREEN_HEIGHT) {
-                monsters.add(0, new RectNPC(new Rect(100, 100, 200, 200), Color.rgb(255, 0, 0), 25));
+                monsters.add(0, new RectNPC(new Rect(150, 150, 300, 300), Color.rgb(255, 0, 0), 25));
                 //int increase = (int)(Math.sqrt(1 + (startTime - initTime)/2000.0));
                 //Constants.NUMBER_ENEMIES = Constants.NUMBER_ENEMIES * increase ;
                 monsters.remove(monsters.size() - 1);
