@@ -52,7 +52,7 @@ public class GameplayScene implements Scene {
         player.update(playerPoint);
 
         npcManager = new NPCManager(Constants.NUMBER_ENEMIES, Constants.SCREEN_HEIGHT + 100);
-        obstacleManager = new ObstacleManager(200, Constants.SCREEN_HEIGHT + 100, 75, Color.BLACK, Color.rgb(102, 51, 0));
+        obstacleManager = new ObstacleManager(210, Constants.SCREEN_HEIGHT + 100, 75, Color.BLACK, Color.rgb(102, 51, 0));
 
 
         BitmapFactory bf = new BitmapFactory();

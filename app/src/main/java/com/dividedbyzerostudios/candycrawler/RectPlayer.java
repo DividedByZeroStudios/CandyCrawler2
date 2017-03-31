@@ -44,7 +44,7 @@ public class RectPlayer implements GameObject {
         Bitmap walk2 = bf.decodeResource(Constants.CURRENT_CONTEXT.getResources(),R.drawable.char_walk2);
 
         idle = new Animation(new Bitmap[]{idleImg}, 2, false);
-        walkRight = new Animation(new Bitmap[]{walk1, walk2}, 0.5f, false);
+        walkRight = new Animation(new Bitmap[]{walk1, walk2}, 0.2f, false);
 
         Matrix m = new Matrix();
         m.preScale(-1, 1);

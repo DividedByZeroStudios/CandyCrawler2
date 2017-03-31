@@ -84,7 +84,7 @@ public class ObstacleManager {
         int currY = -5*Constants.SCREEN_HEIGHT/4;
         while(currY < 0) {
             int xStart = (int)(Math.random()*(Constants.SCREEN_WIDTH - playerGap));
-            obstacles.add(new Obstacle(obstacleHeight, color, doorcolor, xStart, currY, playerGap + 20));
+            obstacles.add(new Obstacle(obstacleHeight, color, doorcolor, xStart, currY, playerGap + 50));
             currY += obstacleHeight + obstacleGap;
         }
     }
